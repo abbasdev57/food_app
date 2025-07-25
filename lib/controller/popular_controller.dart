@@ -1,58 +1,155 @@
-import 'package:food_app/backendhelper/data/repo/popular_product_repo.dart';
-import 'package:food_app/modal/popular_product_modal.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
+import '../data/repo/popular_product_repo.dart';
+import '../modal/cart_model.dart';
+import '../modal/popular_product_modal.dart';
+import '../utils/colors.dart';
+import 'cart_controller.dart';
 
 class PopularProductController extends GetxController {
-  // This controller is used to manage the state of popular products and to handle the logic related to them.
+  //instance of repo
 
   final PopularProductRepo popularProductRepo;
-  
+
   PopularProductController({required this.popularProductRepo});
-  
-  List<dynamic> _popularProductList = [];
-  List<dynamic> get popularProductList => _popularProductList;
-  
+
+  late CartController _cart;
+
+  List<ProductModel> _popularProductList = [];
+
+  //getter for popularProductList
+  List<ProductModel> get popularProductList => _popularProductList;
+
   bool _isLoaded = false;
+
   bool get isLoaded => _isLoaded;
-  
-  // Method to fetch popular products from the repository
-Future<void> getPopularProductList() async {
-  Response response = await popularProductRepo.getPopularProductsList();
 
-  if(response.statusCode == 200){
-    _popularProductList = [];
-        print("inside get popular product list");
-    
-    _popularProductList.addAll(Product.fromJson(response.body).products);
-    _isLoaded = true;
+  int _quantity = 0;
 
-  //   update the list and used for getx
+  int get getQuantity => _quantity;
+
+  int _inCartItems = 0;
+
+  int get getInCartItems => _inCartItems + _quantity;
+
+  Future<void> getPopularProductList() async {
+    Response response = await popularProductRepo.getPopularProductsList();
+    //statuscode = 200 equals to server response is successful
+
+    if (response.statusCode == 200) {
+      _popularProductList = [];
+      print("getting products List");
+      // print(response.body);
+      // print("response.body");
+
+      //modal work
+      _popularProductList.addAll(Product.fromJson(response.body).products);
+
+      _isLoaded = true;
+
+      // update the list everytime?
+      /// = setState((){});
+      update();
+    } else {
+      print("Error in controller");
+    }
+  }
+
+  //set Quantity
+
+  void setQuantity(bool increment) {
+    debugPrint("Setting quantity");
+    if (increment) {
+      _quantity = checkQuantity(_quantity + 1);
+      debugPrint("+ quantity$_quantity");
+    } else {
+      _quantity = checkQuantity(_quantity - 1);
+      debugPrint("- quantity$_quantity");
+    }
     update();
   }
-  else{
-    print('Error in Controller');
+
+  // to limit the quantity
+
+  int checkQuantity(int q) {
+    debugPrint("Checking quantity");
+    if ((_inCartItems + q) < 0) {
+      //appear on top
+      Get.snackbar(
+        "Item",
+        "Quantity cannot be reduced more",
+        backgroundColor: AppColors.mainColor,
+        colorText: Colors.white,
+      );
+      if (_inCartItems > 0) {
+        debugPrint("in cart items $_inCartItems inside check quantity");
+        _quantity = -_inCartItems;
+        return _quantity;
+      }
+
+      return 0;
+    } else if ((_inCartItems + q) > 20) {
+      Get.snackbar(
+        "Item",
+        "Quantity cannot be reduced more",
+        backgroundColor: AppColors.mainColor,
+        colorText: Colors.white,
+      );
+      return 20;
+    } else {
+      return q;
+    }
   }
-}
-  
-  
-  // List of popular product IDs
-  // List<int> _popularProductIds = [];
-  //
-  // // Getter for popular product IDs
-  // List<int> get popularProductIds => _popularProductIds;
-  //
-  // // Method to add a product ID to the list
-  // void addProductId(int id) {
-  //   if (!_popularProductIds.contains(id)) {
-  //     _popularProductIds.add(id);
-  //     update(); // Notify listeners about the change
-  //   }
-  // }
-  //
-  // // Method to remove a product ID from the list
-  // void removeProductId(int id) {
-  //   _popularProductIds.remove(id);
-  //   update(); // Notify listeners about the change
-  // }
+
+  // refresh everytime
+
+  initProduct(ProductModel productsModal, CartController controller) {
+    debugPrint("Init Product");
+
+    _quantity = 0;
+    _inCartItems = 0;
+    _cart = controller;
+    //if exist
+    var exists = false;
+    exists = _cart.existInCart(productsModal);
+
+    if (exists) {
+      _inCartItems = _cart.getQuantity(productsModal);
+
+      debugPrint("exist in cart$exists quantity$_inCartItems");
+    }
+    //get from Storage
+
+    // cart items=3
+  }
+
+  void addItemTOCart(ProductModel product) {
+    debugPrint("adding item to cart");
+
+    ///call to the cart controller method
+    _cart.addItemToController(product, _quantity);
+    // reset the quantity because the item has been added to the cart successfully and we don't want to add the same quantity again
+    _quantity = 0;
+    _inCartItems = _cart.getQuantity(product);
+    _cart.getCartItems.forEach((key, itemValue) {
+      debugPrint(
+        "id ${itemValue.id!}  quantity ${itemValue.quantity!} isExist ${itemValue.isExist!}",
+      );
+    });
+    update();
+  }
+
+  int get totalItems {
+    return _cart.getTotalItems;
+
+    // var totalQuantity = 0;
+    // _cart.getCartItems.forEach((key, value) {
+    //   totalQuantity += value.quantity!;
+    // });
+    // return totalQuantity;
+  }
+
+  List<CartModal> get getItems {
+    return _cart.getItems;
+  }
 }

@@ -9,6 +9,7 @@ class PopularProductRepo extends GetxService {
   // popular products as needed.
 
   final ApiClient apiClient;
+
   PopularProductRepo({required this.apiClient});
 
   // Example method to fetch popular products
@@ -17,7 +18,6 @@ class PopularProductRepo extends GetxService {
   //   await Future.delayed(Duration(seconds: 2));
   //   return ['Product A', 'Product B', 'Product C'];
   // }
-
 
   Future<Response> getPopularProductsList() async {
     print('Fetching popular products from the repository...');

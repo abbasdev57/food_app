@@ -212,9 +212,7 @@ class _MainFoodBodyState extends State<MainFoodBody> {
               borderRadius: BorderRadius.circular(20.r),
               image: DecorationImage(
                 image: NetworkImage(
-                  AppConstants.BASE_URL +
-                      AppConstants.UPLOAD +
-                      popularProduct.img!,
+                  '${AppConstants.BASE_URL}/${popularProduct.img!}',
                 ),
                 fit: BoxFit.cover,
               ),
@@ -315,9 +313,7 @@ class _MainFoodBodyState extends State<MainFoodBody> {
                 //Todo differenet from dbstech
                 ///recommendedPrdouct.recommendedProductsList[index].img!
                 image: NetworkImage(
-                  AppConstants.BASE_URL +
-                      AppConstants.UPLOAD +
-                      recommendedProduct.img!,
+                  '${AppConstants.BASE_URL}/${recommendedProduct.img!}',
                 ),
                 fit: BoxFit.cover,
               ),

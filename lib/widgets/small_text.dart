@@ -23,7 +23,6 @@ class SmallText extends StatelessWidget {
         fontSize: size,
         //fontFamily: 'Assistant',
         height: height,
-
       ),
     );
   }

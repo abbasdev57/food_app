@@ -5,6 +5,7 @@ class Product {
   late List<ProductModel> _products;
 
   List<ProductModel> get products => _products;
+
   //  add int below by me
   Product({
     required int totalSize,
@@ -16,9 +17,10 @@ class Product {
     _typeId = typeId;
     _offset = offset;
     _products = products;
+    _products = []; // Ensure it's always initialized
   }
 
-  Product.fromJson(Map<String,dynamic> json){
+  Product.fromJson(Map<String, dynamic> json) {
     _totalSize = json['total_size'];
     _typeId = json['type_id'];
     _offset = json['offset'];
@@ -53,7 +55,7 @@ class ProductModel {
     this.location,
     this.stars,
     this.typeId,
-    this.updatedAt
+    this.updatedAt,
   });
 
   ProductModel.fromJson(Map<String, dynamic> json) {
@@ -67,6 +69,5 @@ class ProductModel {
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     typeId = json['type_id'];
-
   }
 }

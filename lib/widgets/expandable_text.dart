@@ -24,45 +24,47 @@ class _ExpandableTextState extends State<ExpandableText> {
     return Container(
       child: secondHalf.isEmpty
           ? SmallText(
-          height: 1.8,
-          color: AppColors.paraColor,
-          size: 16.sp,
-          text: firstHalf)
-          : Column(
-        children: [
-          SmallText(
               height: 1.8,
               color: AppColors.paraColor,
               size: 16.sp,
-              text: hiddenText
-                  ? firstHalf + "..."
-                  : (firstHalf + secondHalf)),
-          SizedBox(height:5.h,),
-          InkWell(
-            onTap: () {
-              setState(() {
-                hiddenText = !hiddenText;
-              });
-            },
-            child: Row(
+              text: firstHalf,
+            )
+          : Column(
               children: [
                 SmallText(
-                  text: hiddenText ? "See More" : "See Less",
-                  color: AppColors.mainColor,
-                  size: 20.sp,
+                  height: 1.8,
+                  color: AppColors.paraColor,
+                  size: 16.sp,
+                  text: hiddenText
+                      ? firstHalf + "..."
+                      : (firstHalf + secondHalf),
                 ),
-                Icon(
-                  hiddenText
-                      ? Icons.arrow_drop_down
-                      : Icons.arrow_drop_up,
-                  color: AppColors.mainColor,
-                  size: 24.sp,
-                )
+                SizedBox(height: 5.h),
+                InkWell(
+                  onTap: () {
+                    setState(() {
+                      hiddenText = !hiddenText;
+                    });
+                  },
+                  child: Row(
+                    children: [
+                      SmallText(
+                        text: hiddenText ? "See More" : "See Less",
+                        color: AppColors.mainColor,
+                        size: 20.sp,
+                      ),
+                      Icon(
+                        hiddenText
+                            ? Icons.arrow_drop_down
+                            : Icons.arrow_drop_up,
+                        color: AppColors.mainColor,
+                        size: 24.sp,
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
-          )
-        ],
-      ),
     );
   }
 
@@ -70,8 +72,10 @@ class _ExpandableTextState extends State<ExpandableText> {
   void initState() {
     if (widget.text.length > textHeight) {
       firstHalf = widget.text.substring(0, textHeight.toInt());
-      secondHalf =
-          widget.text.substring(textHeight.toInt() + 1, widget.text.length);
+      secondHalf = widget.text.substring(
+        textHeight.toInt() + 1,
+        widget.text.length,
+      );
     } else {
       firstHalf = widget.text;
       secondHalf = "";

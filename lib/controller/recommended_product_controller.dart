@@ -1,9 +1,9 @@
 import 'package:get/get.dart';
-import '../backendhelper/data/repo/recommended_product_repo.dart';
+import '../data/repo/recommended_product_repo.dart';
 import '../modal/popular_product_modal.dart';
 
 class RecommendedProductController extends GetxController {
-//instance of repo
+  //instance of repo
 
   final RecommendedProductRepo recommendedProductRepo;
 
@@ -20,26 +20,26 @@ class RecommendedProductController extends GetxController {
   bool get isLoaded => _isLoaded;
 
   Future<void> getRecommendedProductList() async {
-    Response response = await recommendedProductRepo.getRecommendedProductList();
-//statuscode = 200 equals to server response is successful
+    try {
+      Response response = await recommendedProductRepo.getRecommendedUrl();
 
-    if (response.statusCode == 200) {
-      _recommendedProductList = [];
-      print("con");
-      print(response.body);
-      print("response.body");
+      if (response.statusCode == 200) {
+        _recommendedProductList = [];
+        var parsed = Product.fromJson(response.body);
+        print("Parsed ${parsed.products.length} recommended products");
 
-//modal work
-      _recommendedProductList.addAll(Product
-          .fromJson(response.body)
-          .products);
+        //modal work
+        _recommendedProductList.addAll(parsed.products);
 
-      _isLoaded = true;
+        _isLoaded = true;
 
-// update the list everytime?
-      update();
-    } else {
-      print("Error in recommended controller");
+        // update the list everytime?
+        update();
+      } else {
+        print("❌ Error: status code = ${response.statusCode}");
+      }
+    } catch (e) {
+      print("❌ Exception: ${e.toString()}");
     }
   }
 }

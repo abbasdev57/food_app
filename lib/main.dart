@@ -8,18 +8,21 @@
 //  4.29 recommended food detail screen 3
 // 5.4 app dependencies + getx controller and api client explianations
 // 5.16 backend helper + dependencies + repo + controller
-
+// 6.10 json nesting explain with model
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:food_app/controller/cart_controller.dart';
+import 'package:food_app/utils/app_routes.dart';
 import 'package:get/get.dart';
-import 'backendhelper/dependencies.dart' as dep;
 import 'controller/popular_controller.dart';
 import 'controller/recommended_product_controller.dart';
+import 'helper/dependencies.dart' as dep;
 import 'pages/home/main_page.dart';
 
-
-void main() async{
+// Future<void> main() async {
+void main() async {
+  debugPrint('Starting the application...');
   WidgetsFlutterBinding.ensureInitialized();
 
   // inititalize dependencies
@@ -39,13 +42,14 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-
     // using media query to get the screen size
-    double screenHeight = MediaQuery.of(context).size.height;
-    double screenWidth = MediaQuery.of(context).size.width;
-    print("Screen Width: $screenWidth");
-    print("Screen Height: $screenHeight");
+    // double screenHeight = MediaQuery.of(context).size.height;
+    // double screenWidth = MediaQuery.of(context).size.width;
+    // print("Screen Width: $screenWidth");
+    // print("Screen Height: $screenHeight");
     //Todo  this method will fetch the data from the server
+
+    Get.find<CartController>().getCartData();
 
     Get.find<PopularProductController>().getPopularProductList();
     Get.find<RecommendedProductController>().getRecommendedProductList();
@@ -54,11 +58,30 @@ class _MyAppState extends State<MyApp> {
       //   designSize: Size(screenWidth, screenHeight),
       designSize: Size(411, 914),
       builder: (context, child) {
-        return GetMaterialApp(
-          title: 'Food Delivery App',
-          home: const MainPage(),
+        return GetBuilder<PopularProductController>(
+          builder: (_) {
+            return GetBuilder<RecommendedProductController>(
+              builder: (_) {
+                return GetBuilder<CartController>(
+                  builder: (_) {
+                    return GetMaterialApp(
+                      initialRoute: AppRoutes.getSplashPage(),
+                      getPages: AppRoutes.routes,
+                      title: 'Food Delivery App',
+                      // home: const MainPage(),
+                    );
+                  },
+                );
+              },
+            );
+          },
         );
       },
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 }
