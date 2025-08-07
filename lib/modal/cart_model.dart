@@ -40,6 +40,6 @@ class CartModal {
     'quantity': quantity,
     'isExist': isExist,
     'time': time,
-    'product': product!,
+    'product': product?.toJson(),
   };
 }

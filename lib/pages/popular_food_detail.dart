@@ -10,6 +10,7 @@ import '../utils/colors.dart';
 import '../widgets/big_text.dart';
 import '../widgets/detail_icon.dart';
 import '../widgets/expandable_text.dart';
+import '../widgets/my_column.dart';
 import 'home/main_food_body.dart';
 
 class PopularFood extends StatelessWidget {

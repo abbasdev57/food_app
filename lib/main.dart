@@ -1,15 +1,3 @@
-//Tasks By hour  1App bar + Custom Widgets
-//2PageView.builder  items + sizing + Animations(Transform ) + Box Shadow
-// 3dots indicator + dimensions
-//4 list view builder,detail screen, expandable text
-// 4.30 recommended food detail screen
-
-// 3.19 popular food detail screen 2
-//  4.29 recommended food detail screen 3
-// 5.4 app dependencies + getx controller and api client explianations
-// 5.16 backend helper + dependencies + repo + controller
-// 6.10 json nesting explain with model
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:food_app/controller/cart_controller.dart';
@@ -20,18 +8,21 @@ import 'controller/recommended_product_controller.dart';
 import 'helper/dependencies.dart' as dep;
 import 'pages/home/main_page.dart';
 
-// Future<void> main() async {
+/// The main entry point of the Flutter application.
 void main() async {
   debugPrint('Starting the application...');
+
+  /// Ensures Flutter engine is initialized before running the app.
   WidgetsFlutterBinding.ensureInitialized();
 
-  // inititalize dependencies
-
+  /// Initialize all necessary dependencies like controllers, services, etc.
   await dep.init();
 
+  /// Run the main app widget.
   runApp(const MyApp());
 }
 
+/// The root widget of the application.
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
@@ -39,35 +30,32 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
+/// The state of the root widget that sets up screen size, routes, and controllers.
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    // using media query to get the screen size
-    // double screenHeight = MediaQuery.of(context).size.height;
-    // double screenWidth = MediaQuery.of(context).size.width;
-    // print("Screen Width: $screenWidth");
-    // print("Screen Height: $screenHeight");
-    //Todo  this method will fetch the data from the server
-
+    // Pre-fetching cart, popular and recommended product data from backend.
     Get.find<CartController>().getCartData();
-
     Get.find<PopularProductController>().getPopularProductList();
     Get.find<RecommendedProductController>().getRecommendedProductList();
+
     return ScreenUtilInit(
-      // designSize: ScreenUtil.defaultSize
-      //   designSize: Size(screenWidth, screenHeight),
+      /// Sets the design size for responsive UI scaling (based on your Figma design).
       designSize: Size(411, 914),
       builder: (context, child) {
+        /// Nesting GetBuilder widgets to rebuild UI when respective controllers change.
         return GetBuilder<PopularProductController>(
           builder: (_) {
             return GetBuilder<RecommendedProductController>(
               builder: (_) {
                 return GetBuilder<CartController>(
                   builder: (_) {
+                    /// Root MaterialApp using GetX for routing and state management.
                     return GetMaterialApp(
+                      title: 'Food Delivery App',
                       initialRoute: AppRoutes.getSplashPage(),
                       getPages: AppRoutes.routes,
-                      title: 'Food Delivery App',
+                      // Uncomment below if you want to skip splash screen
                       // home: const MainPage(),
                     );
                   },
@@ -80,6 +68,7 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
+  /// Clean up resources (if any) when the widget is removed from the widget tree.
   @override
   void dispose() {
     super.dispose();
