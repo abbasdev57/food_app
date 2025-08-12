@@ -15,15 +15,16 @@ class CartHistory extends StatefulWidget {
 class _CartHistoryState extends State<CartHistory> {
   @override
   Widget build(BuildContext context) {
+
     Map<String, int> cartItemsPerOrder = {};
 
-    var cartHistory = Get.find<CartController>().getCartHistory;
+    var getCartHistoryList = Get.find<CartController>().getCartHistory;
 
-    for (int i = 0; i < cartHistory.length; i++) {
-      if (cartItemsPerOrder.containsKey(cartHistory[i].time!)) {
-        cartItemsPerOrder.update(cartHistory[i].time!, (value) => value + 1);
+    for (int i = 0; i < getCartHistoryList.length; i++) {
+      if (cartItemsPerOrder.containsKey(getCartHistoryList[i].time!)) {
+        cartItemsPerOrder.update(getCartHistoryList[i].time!, (value) => value + 1);
       } else {
-        cartItemsPerOrder.putIfAbsent(cartHistory[i].time!, () => 1);
+        cartItemsPerOrder.putIfAbsent(getCartHistoryList[i].time!, () => 1);
       }
     }
 
@@ -33,14 +34,14 @@ class _CartHistoryState extends State<CartHistory> {
     }
 
     List<int> orderTime = cartOrderTimeToList();
-    debugPrint("cartHistory = $cartHistory");
+    debugPrint("cartHistory = $getCartHistoryList");
     debugPrint("orderTime = $orderTime");
 
     var saveCounter = 0;
 
     for (int i = 0; i < cartItemsPerOrder.length; i++) {
       for (int j = 0; j < orderTime[i]; j++) {
-        debugPrint("cartHistory[saveCounter] = ${cartHistory[saveCounter]}");
+        debugPrint("cartHistory[saveCounter] = ${getCartHistoryList[saveCounter]}");
         debugPrint("orderTime[i] = ${orderTime[i]}");
 
         // cartHistory[saveCounter].quantity = orderTime[i];
@@ -79,6 +80,7 @@ class _CartHistoryState extends State<CartHistory> {
               ],
             ),
           ),
+        /// list of cart history
         ],
       ),
     );

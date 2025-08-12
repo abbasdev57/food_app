@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:food_app/pages/profile_page.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
+
+
 import '../utils/colors.dart';
 import 'cart_history.dart';
 import 'cart_page.dart';
 import 'home/main_page.dart';
 
+/// HomePage displays the main layout with bottom tab navigation
+/// using the updated PersistentTabView (clean and non-deprecated).
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -13,105 +18,87 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  /// Controller to handle tab switching
+  late PersistentTabController _controller;
 
-  // late PersistentTabController _controller;
+  @override
+  void initState() {
+    super.initState();
+    _controller = PersistentTabController(initialIndex: 0);
+  }
 
-  final List<Widget> _pages = [
-    MainPage(),
-    CartPage(),
-    CartHistory(),
-    Scaffold(body: Center(child: Text("Profile Page"))), //
-  ];
-
-
-  int _selectedIndex = 0;
-
+  /// Define all the pages for each tab
   List<Widget> _buildScreens() {
     return [
-      MainPage(),
-      CartPage(),
-      CartHistory()
+      MainPage(),                    // Home Page
+      CartHistory(),                // Order History
+      CartPage(),                   // Cart Page
+      ProfilePage()
     ];
   }
+
+  /// Define navigation bar items
   List<PersistentBottomNavBarItem> _navBarsItems() {
     return [
       PersistentBottomNavBarItem(
-        icon: Icon(Icons.home),
-        title: ("Home"),
+        icon: const Icon(Icons.home),
+        title: "Home",
         activeColorPrimary: AppColors.mainColor,
-        inactiveColorPrimary: Colors.grey[400],
+        inactiveColorPrimary: Colors.grey,
       ),
       PersistentBottomNavBarItem(
-        icon: Icon(Icons.shopping_cart),
-        title: ("Cart"),
+        icon: const Icon(Icons.history),
+        title: "History",
         activeColorPrimary: AppColors.mainColor,
-        inactiveColorPrimary: Colors.grey[400],
+        inactiveColorPrimary: Colors.grey,
       ),
       PersistentBottomNavBarItem(
-        icon: Icon(Icons.history),
-        title: ("History"),
+        icon: const Icon(Icons.shopping_cart),
+        title: "Cart",
         activeColorPrimary: AppColors.mainColor,
-        inactiveColorPrimary: Colors.grey[400],
+        inactiveColorPrimary: Colors.grey,
+      ),
+      PersistentBottomNavBarItem(
+        icon: const Icon(Icons.person),
+        title: "Profile",
+        activeColorPrimary: AppColors.mainColor,
+        inactiveColorPrimary: Colors.grey,
       ),
     ];
   }
 
   @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    // _controller = PersistentTabController(initialIndex: 0);
-  }
-
-  // @override
-  // Widget build(BuildContext context) {
-  //   // TODO: implement build
-  //   return PersistentTabView(context, screens: _buildScreens(),
-  //     controller: _controller,
-  //     items: _navBarsItems(),
-  //     confineToSafeArea: true,
-  //     backgroundColor: Colors.white,
-  //     handleAndroidBackButtonPress: true,
-  //     resizeToAvoidBottomInset: true,
-  //     stateManagement: true,
-  //     // hideNavigationBarWhenKeyboardShows: true,
-  //     // popAllScreensOnTapOfSelectedTab: true,
-  //     // popActionScreens: PopActionScreensType.all,
-  //     // itemAnimationProperties: ItemAnimationProperties(
-  //     //   duration: Duration(milliseconds: 200),
-  //     //   curve: Curves.ease,
-  //     // ),
-  //     // screenTransitionAnimation: ScreenTransitionAnimation(
-  //     //   animateTabTransition: true,
-  //     //   curve: Curves.ease,
-  //     //   duration: Duration(milliseconds: 200),
-  //     // ),
-  //     navBarStyle: NavBarStyle.style1,
-  //   );
-  // }
-
-
- @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return PersistentTabView(
+      context,
 
-      body: _pages[_selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        unselectedItemColor: Colors.grey[400],
-        selectedItemColor: AppColors.mainColor,
-        onTap: (int index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-          BottomNavigationBarItem(icon:Icon(Icons.archive),label: "History" ),
-          BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: "Cart"),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
-        ],
+      /// Controller handles tab switching
+      controller: _controller,
+
+      /// The list of screens to display per tab
+      screens: _buildScreens(),
+
+      /// Navigation bar items
+      items: _navBarsItems(),
+
+      /// Safe area + layout behavior
+      backgroundColor: Colors.white,
+      resizeToAvoidBottomInset: true,
+
+
+      /// If true, state of all screens is preserved
+      stateManagement: true,
+
+      /// Add border radius or background behind navbar
+      decoration: NavBarDecoration(
+        borderRadius: BorderRadius.circular(10),
+        colorBehindNavBar: Colors.white,
       ),
+
+
+
+      /// Choose a nav bar style from built-in styles
+      navBarStyle: NavBarStyle.style6, // You can use style1, style9 etc.
     );
   }
 }

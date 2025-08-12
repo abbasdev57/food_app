@@ -1,4 +1,5 @@
-//detail food = popularfoodpage
+// This screen shows the detail of a selected food item from the Popular Food List.
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -11,33 +12,30 @@ import '../widgets/big_text.dart';
 import '../widgets/detail_icon.dart';
 import '../widgets/expandable_text.dart';
 import '../widgets/my_column.dart';
-import 'home/main_food_body.dart';
 
 class PopularFood extends StatelessWidget {
-  final pageIndex;
+  /// The index of the selected product passed through route
+  final int pageIndex;
 
-  const PopularFood({Key? key, required this.pageIndex}) : super(key: key);
+  const PopularFood({super.key, required this.pageIndex});
 
   @override
   Widget build(BuildContext context) {
-    /// getting products details from controller to modal to json to online
-    var products =
-        Get.find<PopularProductController>().popularProductList[pageIndex];
+    /// Fetch the product using the passed index from the PopularProductController
+    var products = Get.find<PopularProductController>().popularProductList[pageIndex];
 
+    /// Initialize product with CartController (to sync quantity/cart state)
     Get.find<PopularProductController>().initProduct(
       products,
       Get.find<CartController>(),
     );
-    //print("popular Food"+pageIndex.toString());
-    //print("popular Food");
-    //print(products.name);
 
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.white,
         body: Stack(
           children: [
-            //image
+            // 🔼 Image at the top of the screen
             Positioned(
               left: 0,
               right: 0,
@@ -45,7 +43,6 @@ class PopularFood extends StatelessWidget {
                 width: double.maxFinite,
                 height: 300.h,
                 decoration: BoxDecoration(
-                  //  color: Colors.black45,
                   image: DecorationImage(
                     fit: BoxFit.cover,
                     image: NetworkImage(
@@ -58,7 +55,7 @@ class PopularFood extends StatelessWidget {
               ),
             ),
 
-            //two icon in a row
+            // 🔼 Two icons: Back and Cart
             Positioned(
               left: 20.w,
               top: 20.h,
@@ -66,6 +63,7 @@ class PopularFood extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  // ← Back button
                   GestureDetector(
                     onTap: () => Navigator.pop(context),
                     child: DetailIcon(
@@ -73,12 +71,14 @@ class PopularFood extends StatelessWidget {
                       iconColor: Colors.black,
                     ),
                   ),
+                  // 🛒 Cart button with item count
                   GetBuilder<PopularProductController>(
                     builder: (controller) {
                       return Stack(
                         children: [
                           GestureDetector(
                             onTap: () {
+                              // Navigate to Cart Page when tapped
                               Get.toNamed(AppRoutes.getCartPage());
                             },
                             child: Container(
@@ -93,20 +93,19 @@ class PopularFood extends StatelessWidget {
                               ),
                             ),
                           ),
+                          // 🧮 Show item count on cart icon (only if items exist)
                           controller.totalItems >= 1
                               ? Positioned(
-                                  right: 0,
-                                  top: 0,
-                                  child: Text(
-                                    Get.find<PopularProductController>()
-                                        .totalItems
-                                        .toString(),
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 16.sp,
-                                    ),
-                                  ),
-                                )
+                            right: 0,
+                            top: 0,
+                            child: Text(
+                              controller.totalItems.toString(),
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 16.sp,
+                              ),
+                            ),
+                          )
                               : Container(),
                         ],
                       );
@@ -116,7 +115,7 @@ class PopularFood extends StatelessWidget {
               ),
             ),
 
-            //downward section
+            // 🔽 Product detail section (below image)
             Positioned(
               top: 300.h - 20.h,
               left: 0,
@@ -134,10 +133,15 @@ class PopularFood extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Title row with rating + icons
                     MyColumn(text: products.name!),
                     SizedBox(height: 20.h),
+
+                    // Title: Introduce
                     BigText(text: "Introduce"),
                     SizedBox(height: 5.h),
+
+                    // Product description (expandable)
                     Expanded(
                       child: SingleChildScrollView(
                         child: ExpandableText(text: products.description!),
@@ -149,6 +153,8 @@ class PopularFood extends StatelessWidget {
             ),
           ],
         ),
+
+        // ⬇️ Bottom bar: Quantity, Price, Add to Cart
         bottomNavigationBar: GetBuilder<PopularProductController>(
           builder: (popularController) {
             return Container(
@@ -163,6 +169,7 @@ class PopularFood extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
+                  // Quantity Selector (Add/Remove buttons)
                   Container(
                     padding: EdgeInsets.all(20.w),
                     decoration: BoxDecoration(
@@ -171,6 +178,7 @@ class PopularFood extends StatelessWidget {
                     ),
                     child: Row(
                       children: [
+                        // ➖ Decrease quantity
                         GestureDetector(
                           onTap: () {
                             popularController.setQuantity(false);
@@ -181,10 +189,14 @@ class PopularFood extends StatelessWidget {
                           ),
                         ),
                         SizedBox(width: 10.w),
+
+                        // 🔢 Show current quantity
                         BigText(
                           text: popularController.getInCartItems.toString(),
                         ),
                         SizedBox(width: 10.w),
+
+                        // ➕ Increase quantity
                         GestureDetector(
                           onTap: () {
                             popularController.setQuantity(true);
@@ -197,14 +209,17 @@ class PopularFood extends StatelessWidget {
                       ],
                     ),
                   ),
-                  Container(
-                    child: BigText(
-                      text: "\$ ${products.price!.toString()}",
-                      color: Colors.red[400],
-                    ),
+
+                  // 💲 Show Price
+                  BigText(
+                    text: "\$ ${products.price!.toString()}",
+                    color: Colors.red[400],
                   ),
+
+                  // ✅ Add to Cart button
                   GestureDetector(
                     onTap: () {
+                      // Add selected item with selected quantity to Cart
                       popularController.addItemTOCart(products);
                     },
                     child: Container(

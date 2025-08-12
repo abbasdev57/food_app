@@ -12,31 +12,35 @@ import '../widgets/big_text.dart';
 import '../widgets/detail_icon.dart';
 import '../widgets/small_text.dart';
 
+/// RecommendedFood is a screen that shows the detailed view of a recommended product including image, description, quantity controls, and an option to add to cart.
 class RecommendedFood extends StatelessWidget {
-  final pageIndex;
+  final int pageIndex;
 
   const RecommendedFood({Key? key, required this.pageIndex}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    print("Recommend");
+    print("Recommend"); // Debug log
+
+    // Fetch product from recommended product list
     var products = Get.find<RecommendedProductController>()
         .recommendedProductList[pageIndex];
+
+    // Initialize PopularProductController with product and cart
     Get.find<PopularProductController>().initProduct(
       products,
       Get.find<CartController>(),
     );
+
     return Scaffold(
       body: CustomScrollView(
         slivers: [
+          /// SliverAppBar with image background and sticky behavior
           SliverAppBar(
-            //remove auto add back button
-            automaticallyImplyLeading: false,
-
-            //Todo: fix image on title while scrolling
+            automaticallyImplyLeading: false, // removes default back button
             pinned: true,
             backgroundColor: Colors.grey,
-            expandedHeight: 300,
+            expandedHeight: 300.h,
 
             flexibleSpace: FlexibleSpaceBar(
               background: Image.network(
@@ -44,6 +48,8 @@ class RecommendedFood extends StatelessWidget {
                 fit: BoxFit.cover,
               ),
             ),
+
+            /// Top bar with clear (back) button and cart icon
             title: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -71,20 +77,19 @@ class RecommendedFood extends StatelessWidget {
                             ),
                           ),
                         ),
-                        Get.find<PopularProductController>().totalItems >= 1
+                        // Cart item count badge
+                        controller.totalItems >= 1
                             ? Positioned(
-                                right: 0,
-                                top: 0,
-                                child: Text(
-                                  Get.find<PopularProductController>()
-                                      .totalItems
-                                      .toString(),
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16.sp,
-                                  ),
-                                ),
-                              )
+                          right: 0,
+                          top: 0,
+                          child: Text(
+                            controller.totalItems.toString(),
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16.sp,
+                            ),
+                          ),
+                        )
                             : Container(),
                       ],
                     );
@@ -93,8 +98,9 @@ class RecommendedFood extends StatelessWidget {
               ],
             ),
 
+            /// Bottom section with product name
             bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(70),
+              preferredSize: Size.fromHeight(70.h),
               child: Container(
                 width: double.maxFinite,
                 decoration: BoxDecoration(
@@ -106,13 +112,15 @@ class RecommendedFood extends StatelessWidget {
                 ),
                 child: Center(
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: BigText(size: 20.sp * 1.3, text: products.name!),
+                    padding: EdgeInsets.all(8.0),
+                    child: BigText(size: 26.sp, text: products.name!),
                   ),
                 ),
               ),
             ),
           ),
+
+          /// Product description section
           SliverToBoxAdapter(
             child: Column(
               children: [
@@ -130,46 +138,55 @@ class RecommendedFood extends StatelessWidget {
           ),
         ],
       ),
+
+      /// Bottom navigation bar with quantity controls and add to cart
       bottomNavigationBar: GetBuilder<PopularProductController>(
         builder: (controller) {
           var finalPrice = products.price! * controller.getInCartItems;
+
           return Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               SizedBox(height: 5.h),
+
+              /// Quantity row
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 20.w),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
+                    /// Decrease quantity
                     GestureDetector(
-                      onTap: () {
-                        controller.setQuantity(false);
-                      },
+                      onTap: () => controller.setQuantity(false),
                       child: DetailIcon(
                         bgColor: Colors.white,
                         icon: Icons.remove,
-                        iconSize: 24.w * 1.4,
+                        iconSize: 34.w,
                       ),
                     ),
+
+                    /// Current quantity and unit price
                     BigText(
                       text:
-                          '${products.price!.toString()} x ${controller.getInCartItems}',
+                      '${products.price!.toString()} x ${controller.getInCartItems}',
                     ),
+
+                    /// Increase quantity
                     GestureDetector(
-                      onTap: () {
-                        controller.setQuantity(true);
-                      },
+                      onTap: () => controller.setQuantity(true),
                       child: DetailIcon(
                         bgColor: Colors.white,
                         icon: Icons.add,
-                        iconSize: 24.w * 1.4,
+                        iconSize: 34.w,
                       ),
                     ),
                   ],
                 ),
               ),
-              SizedBox(height: 15.w),
+
+              SizedBox(height: 15.h),
+
+              /// Final row: Favorite, Total Price, Add to Cart
               Container(
                 height: 100.h,
                 decoration: BoxDecoration(
@@ -182,6 +199,7 @@ class RecommendedFood extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
+                    /// Favorite icon
                     Container(
                       padding: EdgeInsets.all(15.w),
                       decoration: BoxDecoration(
@@ -194,12 +212,14 @@ class RecommendedFood extends StatelessWidget {
                         iconSize: 40.w,
                       ),
                     ),
-                    Container(
-                      child: BigText(
-                        text: "\$ $finalPrice",
-                        color: Colors.red[400],
-                      ),
+
+                    /// Total price
+                    BigText(
+                      text: "\$ $finalPrice",
+                      color: Colors.red[400],
                     ),
+
+                    /// Add to Cart Button
                     GestureDetector(
                       onTap: () {
                         controller.addItemTOCart(products);

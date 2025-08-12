@@ -13,7 +13,7 @@ class AppConstants {
   /// - Emulator: 'http://10.0.2.2:3000/'
   /// - Localhost: 'http://localhost:3000/'
   /// - Physical Device (e.g. Android phone): use your local IP, e.g. 'http://192.168.x.x:3000/'
-  static const String BASE_URL = 'http://192.168.100.41:3000';
+  static const String BASE_URL = 'http://192.168.100.29:3000';
 
   /// Subpath for uploaded image/static files.
   static const String UPLOAD = "/uploads/";
