@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:food_app/controller/cart_controller.dart';
+import 'package:food_app/pages/auth/login.dart';
+import 'package:food_app/pages/auth/sign_up.dart';
 import 'package:food_app/utils/app_routes.dart';
 import 'package:get/get.dart';
 import 'controller/popular_controller.dart';
@@ -53,10 +55,10 @@ class _MyAppState extends State<MyApp> {
                     /// Root MaterialApp using GetX for routing and state management.
                     return GetMaterialApp(
                       title: 'Food Delivery App',
-                      initialRoute: AppRoutes.getSplashPage(),
-                      getPages: AppRoutes.routes,
-                      // Uncomment below if you want to skip splash screen
-                      // home: const MainPage(),
+                      home: LoginPage(),
+                      // initialRoute: AppRoutes.getSplashPage(),
+                      // getPages: AppRoutes.routes,
+
                     );
                   },
                 );

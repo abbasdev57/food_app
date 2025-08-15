@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:food_app/widgets/no_data_page.dart';
 import 'package:get/get.dart';
 
 import '../controller/cart_controller.dart';
@@ -68,142 +69,144 @@ class CartPage extends StatelessWidget {
           /// -------------------------
           /// Cart items list
           /// -------------------------
-          Positioned(
-            top: 100.h,
-            left: 10.w,
-            right: 10.w,
-            bottom: 0,
-            child: MediaQuery.removePadding(
-              context: context,
-              removeTop: true,
-              child: GetBuilder<CartController>(
-                builder: (controller) {
-                  var cartList = controller.getItems;
+          GetBuilder<CartController>(builder: (_cartController){
+            return _cartController.getItems.length>0?Positioned(
+              top: 100.h,
+              left: 10.w,
+              right: 10.w,
+              bottom: 0,
+              child: MediaQuery.removePadding(
+                context: context,
+                removeTop: true,
+                child: GetBuilder<CartController>(
+                  builder: (controller) {
+                    var cartList = controller.getItems;
 
-                  return ListView.builder(
-                    itemCount: cartList.length,
-                    itemBuilder: (_, index) {
-                      return Container(
-                        margin: EdgeInsets.all(10.w),
-                        height: 100.h,
-                        child: Row(
-                          children: [
-                            /// Product image (clickable to go to product detail)
-                            GestureDetector(
-                              onTap: () {
-                                var product = cartList[index].product!;
-                                var popularIndex = Get.find<PopularProductController>()
-                                    .popularProductList
-                                    .indexOf(product);
-
-                                if (popularIndex >= 0) {
-                                  Get.toNamed(AppRoutes.getPopularFood(popularIndex));
-                                } else {
-                                  var recommendedIndex =
-                                  Get.find<RecommendedProductController>()
-                                      .recommendedProductList
+                    return ListView.builder(
+                      itemCount: cartList.length,
+                      itemBuilder: (_, index) {
+                        return Container(
+                          margin: EdgeInsets.all(10.w),
+                          height: 100.h,
+                          child: Row(
+                            children: [
+                              /// Product image (clickable to go to product detail)
+                              GestureDetector(
+                                onTap: () {
+                                  var product = cartList[index].product!;
+                                  var popularIndex = Get.find<PopularProductController>()
+                                      .popularProductList
                                       .indexOf(product);
-                                  Get.toNamed(AppRoutes.getRecommendedFood(recommendedIndex));
-                                }
-                              },
-                              child: Container(
-                                height: 120.h,
-                                width: 120.w,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20.r),
-                                  image: DecorationImage(
-                                    image: NetworkImage(
-                                      AppConstants.BASE_URL +
-                                          AppConstants.UPLOAD +
-                                          cartList[index].img!,
+
+                                  if (popularIndex >= 0) {
+                                    Get.toNamed(AppRoutes.getPopularFood(popularIndex));
+                                  } else {
+                                    var recommendedIndex =
+                                    Get.find<RecommendedProductController>()
+                                        .recommendedProductList
+                                        .indexOf(product);
+                                    Get.toNamed(AppRoutes.getRecommendedFood(recommendedIndex));
+                                  }
+                                },
+                                child: Container(
+                                  height: 120.h,
+                                  width: 120.w,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20.r),
+                                    image: DecorationImage(
+                                      image: NetworkImage(
+                                        AppConstants.BASE_URL +
+                                            AppConstants.UPLOAD +
+                                            cartList[index].img!,
+                                      ),
+                                      fit: BoxFit.cover,
                                     ),
-                                    fit: BoxFit.cover,
                                   ),
                                 ),
                               ),
-                            ),
 
-                            SizedBox(width: 10.w),
+                              SizedBox(width: 10.w),
 
-                            /// Product details and quantity controls
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  BigText(
-                                    text: cartList[index].name!,
-                                    color: Colors.black,
-                                  ),
-                                  const SmallText(text: ""),
+                              /// Product details and quantity controls
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    BigText(
+                                      text: cartList[index].name!,
+                                      color: Colors.black,
+                                    ),
+                                    const SmallText(text: ""),
 
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      /// Price
-                                      BigText(
-                                        text: cartList[index].price!.toString(),
-                                        color: Colors.redAccent,
-                                      ),
-
-                                      /// Quantity control (− / qty / +)
-                                      Container(
-                                        padding: EdgeInsets.all(5.w),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.circular(10.r),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        /// Price
+                                        BigText(
+                                          text: cartList[index].price!.toString(),
+                                          color: Colors.redAccent,
                                         ),
-                                        child: Row(
-                                          children: [
-                                            /// Decrease quantity
-                                            GestureDetector(
-                                              onTap: () => controller.addItemToController(
-                                                cartList[index].product!,
-                                                -1,
-                                              ),
-                                              child: const Icon(
-                                                Icons.remove,
-                                                color: AppColors.signColor,
-                                              ),
-                                            ),
 
-                                            SizedBox(width: 10.w),
-
-                                            /// Quantity text
-                                            BigText(
-                                              text: cartList[index].quantity.toString(),
-                                            ),
-
-                                            SizedBox(width: 10.w),
-
-                                            /// Increase quantity
-                                            GestureDetector(
-                                              onTap: () => controller.addItemToController(
-                                                cartList[index].product!,
-                                                1,
+                                        /// Quantity control (− / qty / +)
+                                        Container(
+                                          padding: EdgeInsets.all(5.w),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.circular(10.r),
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              /// Decrease quantity
+                                              GestureDetector(
+                                                onTap: () => controller.addItemToController(
+                                                  cartList[index].product!,
+                                                  -1,
+                                                ),
+                                                child: const Icon(
+                                                  Icons.remove,
+                                                  color: AppColors.signColor,
+                                                ),
                                               ),
-                                              child: const Icon(
-                                                Icons.add,
-                                                color: AppColors.signColor,
+
+                                              SizedBox(width: 10.w),
+
+                                              /// Quantity text
+                                              BigText(
+                                                text: cartList[index].quantity.toString(),
                                               ),
-                                            ),
-                                          ],
+
+                                              SizedBox(width: 10.w),
+
+                                              /// Increase quantity
+                                              GestureDetector(
+                                                onTap: () => controller.addItemToController(
+                                                  cartList[index].product!,
+                                                  1,
+                                                ),
+                                                child: const Icon(
+                                                  Icons.add,
+                                                  color: AppColors.signColor,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  );
-                },
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
               ),
-            ),
-          ),
+            ):NoDataPage(text: "Your Cart is Empty");
+          })
         ],
       ),
 
@@ -221,7 +224,7 @@ class CartPage extends StatelessWidget {
                 topLeft: Radius.circular(30.r),
               ),
             ),
-            child: Row(
+            child:cartController.getItems.isNotEmpty?  Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 /// Total Price Display
@@ -249,7 +252,7 @@ class CartPage extends StatelessWidget {
                   ),
                 ),
               ],
-            ),
+            ): Container()
           );
         },
       ),

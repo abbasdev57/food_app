@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:food_app/pages/auth/sign_up.dart';
 import 'package:food_app/pages/profile_page.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 
@@ -30,9 +31,10 @@ class _HomePageState extends State<HomePage> {
   /// Define all the pages for each tab
   List<Widget> _buildScreens() {
     return [
-      MainPage(),                    // Home Page
+      MainPage(),
+      SignUp(),
       CartHistory(),                // Order History
-      CartPage(),                   // Cart Page
+      // CartPage(),                   // Cart Page
       ProfilePage()
     ];
   }
